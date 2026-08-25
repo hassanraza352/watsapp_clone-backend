@@ -134,11 +134,19 @@ const updateProfile = async (req, res) => {
 
         const { name, about } = req.body;
 
+        const updateData = {
+            name,
+            bio: about
+        };
+
+        // Agar user ne new image select ki hai
+        if (req.file) {
+            updateData.profilePic = `/uploads/${req.file.filename}`;
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
-            req.user._id,{ 
-                name,
-                bio:about
-            },
+            req.user._id,
+            updateData,
             {
                 new: true,
             }
@@ -150,6 +158,8 @@ const updateProfile = async (req, res) => {
         });
 
     } catch (err) {
+
+        console.log(err);
 
         res.status(500).json({
             success: false,
